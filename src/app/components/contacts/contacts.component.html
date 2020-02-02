@@ -1,0 +1,17 @@
+<div class="container">
+    <div *ngFor="let contact of contacts">
+        <ul>
+            <li>{{contact.fullName}}</li>
+            <li>{{contact.email}}</li>
+            <li>{{contact.phone}}</li>
+            <li><button (click)="deleteContact(contact.id)">Delete</button></li>
+        </ul>
+    </div>
+    <div>
+        <input [(ngModel)]="firstName">
+        <input [(ngModel)]="lastName">
+        <input [(ngModel)]="email">
+        <input [(ngModel)]="phone">
+    </div>
+    <button (click)="newContact()">Add New Contact</button>
+</div>
