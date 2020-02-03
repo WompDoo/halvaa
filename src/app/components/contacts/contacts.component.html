@@ -1,17 +1,84 @@
-<div class="container">
-    <div *ngFor="let contact of contacts">
+<div class="ui container">
+    <div class="ui grid">
+        <div class="sixteen wide column">
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>E-mail</th>
+                        <th>E-mail address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr (mouseover)="hovered = true" (mouseout)="hovered = false">
+                        <td>John Lilki</td>
+                        <td>September 14, 2013</td>
+                        <td>jhlilk22@yahoo.com</td>
+                        <button *ngIf="hovered" class="ui icon red button delete">
+                            <i class="cross icon"></i>
+                          </button>
+                        
+                    </tr>
+                    <tr>
+                        <td>Jamie Harington</td>
+                        <td>January 11, 2014</td>
+                        <td>jamieharingonton@yahoo.com</td>
+                    </tr>
+                    <tr>
+                        <td>Jill Lewis</td>
+                        <td>May 11, 2014</td>
+                        <td>jilsewris22@yahoo.com</td>
+                    </tr>
+                </tbody>
+                <tfoot class="full-width">
+                    <tr>
+                        <th colspan="4">
+                            <div (click)="newUser = !newUser"
+                                class="ui right floated small primary labeled icon button">
+                                <i class="user icon"></i> Add User
+                            </div>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div *ngIf="newUser" class="sixteen wide column">
+            <div class="ui segment">
+                <div class="ui form">
+                    <div class="four fields">
+                        <div class="field">
+                            <label>First name</label>
+                            <input type="text" [(ngModel)]="firstName" placeholder="First Name">
+                        </div>
+                        <div class="field">
+                            <label>Last name</label>
+                            <input type="text" [(ngModel)]="lastName" placeholder="Last Name">
+                        </div>
+                        <div class="field">
+                            <label>Email</label>
+                            <input type="email" [(ngModel)]="email" placeholder="Email">
+                        </div>
+                        <div class="field">
+                            <label>Phone</label>
+                            <input type="text" pattern="[0-9]*" [(ngModel)]="phone" placeholder="Phone" />
+                        </div>
+                        <button (click)="newContact()" class="ui button" type="submit">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<div cdkDropList class="example-list" (cdkDropListDragged)="drop($event)">
+    <div class="example-box" *ngFor="let contact of rndList" cdkDrag>
         <ul>
-            <li>{{contact.fullName}}</li>
+            <li>{{contact.firstName}}</li>
             <li>{{contact.email}}</li>
             <li>{{contact.phone}}</li>
-            <li><button (click)="deleteContact(contact.id)">Delete</button></li>
+            <!-- <li><button (click)="deleteContact(contact.id)">Delete</button></li> -->
         </ul>
     </div>
-    <div>
-        <input [(ngModel)]="firstName">
-        <input [(ngModel)]="lastName">
-        <input [(ngModel)]="email">
-        <input [(ngModel)]="phone">
-    </div>
-    <button (click)="newContact()">Add New Contact</button>
+</div>
 </div>

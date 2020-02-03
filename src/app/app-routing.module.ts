@@ -4,15 +4,15 @@ import { Routes, RouterModule } from '@angular/router';
 
 
 const routes: Routes = [
-  {
-    path: '',
-    component: ContactsComponent,
-    data: { title: 'Contact List' }
-  },
+    {
+        path: '',
+        component: ContactsComponent,
+        data: { title: 'Contact List' }
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule]
 })
 export class AppRoutingModule { }
