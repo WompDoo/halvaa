@@ -9,25 +9,14 @@
                         <th>E-mail address</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr (mouseover)="hovered = true" (mouseout)="hovered = false">
-                        <td>John Lilki</td>
-                        <td>September 14, 2013</td>
-                        <td>jhlilk22@yahoo.com</td>
+                <tbody cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                    <tr class="example-box" *ngFor="let contact of contacts" cdkDrag>
+                        <td>{{contact.fullName}}</td>
+                        <td>{{contact.email}}</td>
+                        <td>{{contact.phone}}</td>
                         <button *ngIf="hovered" class="ui icon red button delete">
                             <i class="cross icon"></i>
-                          </button>
-                        
-                    </tr>
-                    <tr>
-                        <td>Jamie Harington</td>
-                        <td>January 11, 2014</td>
-                        <td>jamieharingonton@yahoo.com</td>
-                    </tr>
-                    <tr>
-                        <td>Jill Lewis</td>
-                        <td>May 11, 2014</td>
-                        <td>jilsewris22@yahoo.com</td>
+                        </button>
                     </tr>
                 </tbody>
                 <tfoot class="full-width">
@@ -68,17 +57,4 @@
             </div>
         </div>
     </div>
-
-
-
-<div cdkDropList class="example-list" (cdkDropListDragged)="drop($event)">
-    <div class="example-box" *ngFor="let contact of rndList" cdkDrag>
-        <ul>
-            <li>{{contact.firstName}}</li>
-            <li>{{contact.email}}</li>
-            <li>{{contact.phone}}</li>
-            <!-- <li><button (click)="deleteContact(contact.id)">Delete</button></li> -->
-        </ul>
-    </div>
-</div>
 </div>

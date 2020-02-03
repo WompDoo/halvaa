@@ -34,4 +34,10 @@ export class ContactService {
         return this.http.delete<Response>(url);
     }
 
+    public editContact(id: number, patchedContact): Observable<Response> {
+        const url: string = environment.apiLink + '/Contacts/' + id;
+
+        return this.http.patch<Response>(url, patchedContact);
+    }
+
 }

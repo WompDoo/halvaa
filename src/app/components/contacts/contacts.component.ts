@@ -11,46 +11,15 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 export class ContactsComponent implements OnInit {
 
     public contacts: Array<IContacts>;
-    public firstName: string;
-    public lastName: string;
-    public email: string;
-    public phone: string;
+    public firstName = '';
+    public lastName = '';
+    public email = '';
+    public phone = '';
     public newUser = false;
     public hovered = false;
-    public rndList = [
-        {
-            firstName: 'this.firstName',
-            lastName: 'this.lastName',
-            email: 'this.email',
-            phone: 'this.phone',
-            sequence: 9000
-        },
-        {
-            firstName: 'this.firstName1',
-            lastName: 'this.lastName1',
-            email: 'this.email',
-            phone: 'this.phone',
-            sequence: 9000
-        },
-        {
-            firstName: 'this.firstName2',
-            lastName: 'this.lastName2',
-            email: 'this.email',
-            phone: 'this.phone',
-            sequence: 9000
-        },
-        {
-            firstName: 'this.firstName3',
-            lastName: 'this.lastName3',
-            email: 'this.email',
-            phone: 'this.phone',
-            sequence: 9000
-        },
-    ]
-
 
     constructor(
-        public contactSerivce: ContactService,
+        public contactService: ContactService,
     ) { }
 
     public ngOnInit(): void {
@@ -58,12 +27,26 @@ export class ContactsComponent implements OnInit {
     }
 
     public drop(event: CdkDragDrop<Array<string>>) {
-        console.log(event)
         moveItemInArray(this.contacts, event.previousIndex, event.currentIndex);
+        console.log(this.contacts[event.currentIndex - 1].sequence)
+        if (this.contacts[event.previousIndex - 1].sequence === undefined) {
+            console.log('?')
+        }
+        const patchedContact: IContacts = {
+            firstName: this.contacts[event.currentIndex].firstName,
+            lastName: this.contacts[event.currentIndex].lastName,
+            email: this.contacts[event.currentIndex].email,
+            phone: this.contacts[event.currentIndex].phone,
+            sequence: this.contacts[event.currentIndex - 1].sequence + 1
+        };
+
+        this.contactService.editContact(this.contacts[event.currentIndex].id, patchedContact).subscribe((response) => {
+            console.log(response)
+        });
     }
 
     public generateContactList(): void {
-        this.contactSerivce.getAllContacts().subscribe((response) => {
+        this.contactService.getAllContacts().subscribe((response) => {
             console.log(response.data);
             this.contacts = response.data;
         });
@@ -75,17 +58,22 @@ export class ContactsComponent implements OnInit {
             lastName: this.lastName,
             email: this.email,
             phone: this.phone,
-            sequence: 9000
+            sequence: 0
         };
 
-        this.contactSerivce.addNewContact(newContact).subscribe((response) => {
+        this.contactService.addNewContact(newContact).subscribe((response) => {
             this.generateContactList();
+            this.firstName = '';
+            this.lastName = '';
+            this.email = '';
+            this.phone = '';
+            this.newUser = false;
         });
     }
 
     public deleteContact(id: number): void {
-        this.contactSerivce.deleteContact(id).subscribe((response) => {
-            this.generateContactList();
-        });
-    }
+    this.contactService.deleteContact(id).subscribe((response) => {
+        this.generateContactList();
+    });
+}
 }
