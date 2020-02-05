@@ -1,12 +1,14 @@
 <div class="ui container">
     <div class="ui grid">
         <div class="sixteen wide column">
+            <h2>Contacts</h2>
             <table class="ui celled table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>E-mail</th>
-                        <th>E-mail address</th>
+                        <th class="four wide">Name</th>
+                        <th class="four wide">E-mail</th>
+                        <th class="four wide">E-mail address</th>
+                        <th class="four wide"></th>
                     </tr>
                 </thead>
                 <tbody cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
@@ -14,44 +16,63 @@
                         <td>{{contact.fullName}}</td>
                         <td>{{contact.email}}</td>
                         <td>{{contact.phone}}</td>
-                        <button *ngIf="hovered" class="ui icon red button delete">
-                            <i class="cross icon"></i>
-                        </button>
+                        <td class="center aligned">
+                            <div class="ui buttons">
+                                <button [disabled]="editUser || newUser" (click)="editContact(contact.id)"
+                                    class="ui labeled icon button">
+                                    <i class="edit icon"></i>
+                                    Edit contact
+                                </button>
+                                <button [disabled]="editUser || newUser" (click)="deleteContact(contact.id)"
+                                    class="ui animated red button" tabindex="0">
+                                    <div class="visible content">
+                                        <i class="close icon"></i>
+                                    </div>
+                                    <div class="hidden content">
+                                        Delete
+                                    </div>
+                                </button>
+                            </div>
+                        </td>
+
                     </tr>
                 </tbody>
                 <tfoot class="full-width">
                     <tr>
                         <th colspan="4">
-                            <div (click)="newUser = !newUser"
+                            <button [disabled]="editUser || newUser" (click)="newUser = !newUser"
                                 class="ui right floated small primary labeled icon button">
                                 <i class="user icon"></i> Add User
-                            </div>
+                            </button>
                         </th>
                     </tr>
                 </tfoot>
             </table>
         </div>
-        <div *ngIf="newUser" class="sixteen wide column">
+        <div *ngIf="newUser || editUser" class="sixteen wide column">
             <div class="ui segment">
-                <div class="ui form">
+                <h2>{{this.contactHeading}}</h2>
+                <div [formGroup]="form" class="ui form">
                     <div class="four fields">
                         <div class="field">
                             <label>First name</label>
-                            <input type="text" [(ngModel)]="firstName" placeholder="First Name">
+                            <input type="text" formControlName="firstName" placeholder="First Name">
                         </div>
                         <div class="field">
                             <label>Last name</label>
-                            <input type="text" [(ngModel)]="lastName" placeholder="Last Name">
+                            <input type="text" formControlName="lastName" placeholder="Last Name">
                         </div>
                         <div class="field">
                             <label>Email</label>
-                            <input type="email" [(ngModel)]="email" placeholder="Email">
+                            <input type="email" formControlName="email" placeholder="Email">
                         </div>
                         <div class="field">
                             <label>Phone</label>
-                            <input type="text" pattern="[0-9]*" [(ngModel)]="phone" placeholder="Phone" />
+                            <input type="text" pattern="[0-9]*" formControlName="phone" placeholder="Phone" />
                         </div>
-                        <button (click)="newContact()" class="ui button" type="submit">Submit</button>
+                        <button *ngIf="newUser" (click)="newContact()" class="ui button" type="submit">Submit</button>
+                        <button *ngIf="editUser" (click)="submitEditContact()" class="ui button"
+                            type="submit">Submit</button>
                     </div>
                 </div>
             </div>
