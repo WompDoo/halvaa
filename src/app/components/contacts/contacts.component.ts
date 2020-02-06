@@ -78,16 +78,18 @@ export class ContactsComponent implements OnInit {
 
     public drop(event: CdkDragDrop<Array<string>>) {
         moveItemInArray(this.contacts, event.previousIndex, event.currentIndex);
-        console.log(this.contacts[event.currentIndex - 1].sequence)
-        if (this.contacts[event.previousIndex - 1].sequence === undefined) {
-            console.log('?')
+        console.log(event.previousIndex, event.currentIndex)
+        let sequence = 0;
+        if (event.currentIndex !== 0) {
+            sequence = this.contacts[event.currentIndex - 1].sequence + 1;
         }
+        console.log(sequence)
         const patchedContact: IContacts = {
             firstName: this.contacts[event.currentIndex].firstName,
             lastName: this.contacts[event.currentIndex].lastName,
             email: this.contacts[event.currentIndex].email,
             phone: this.contacts[event.currentIndex].phone,
-            sequence: this.contacts[event.currentIndex - 1].sequence + 1
+            sequence
         };
 
         this.contactService.editContact(this.contacts[event.currentIndex].id, patchedContact).subscribe((response) => {
@@ -96,10 +98,8 @@ export class ContactsComponent implements OnInit {
     }
 
     public generateContactList(): void {
-        /* this.contacts = this.stuff; */
         this.contactHeading = 'Add new contact';
         this.contactService.getAllContacts().subscribe((response) => {
-            console.log(response.data);
             this.contacts = response.data;
         });
     }
@@ -128,10 +128,11 @@ export class ContactsComponent implements OnInit {
             sequence: this.form.get('sequence').value
         };
 
+        console.log(this.form.get('id').value)
         this.contactService.editContact(this.form.get('id').value, patchedContact).subscribe((response) => {
             this.generateContactList();
             this.editUser = false;
-            this.editContact(this.form.get('id').value);
+            this.editContact(id);
         });
     }
 
@@ -141,9 +142,9 @@ export class ContactsComponent implements OnInit {
         });
     }
 
-    public editContact(inputIndex: number): void {
-        event.preventDefault();
-        const contact = this.contacts[inputIndex];
+    public createContact(id: number): void {
+        const contact = this.contacts[id];
+        console.log(contact)
         this.form.setValue({
             firstName: contact.firstName,
             lastName: contact.lastName,
@@ -152,17 +153,26 @@ export class ContactsComponent implements OnInit {
             sequence: contact.sequence,
             id: contact.id
         });
+        console.log(this.form.value)
+    }
+
+    public editContact(inputIndex: number): void {
+        console.log(inputIndex)
         this.contactHeading = 'Edit contact';
         if (this.edit) {
             if (this.edit.indexOf(inputIndex) === -1) {
+                console.log('jah')
                 this.editUser = true;
                 this.edit.push(inputIndex);
+                this.createContact(inputIndex);
             } else {
+                console.log('ei')
                 this.editUser = false;
                 this.edit.splice(this.edit.indexOf(inputIndex), 1);
             }
         } else {
             this.edit = [inputIndex];
         }
+        console.log(this.edit)
     }
 }
