@@ -12,13 +12,13 @@
                     </tr>
                 </thead>
                 <tbody cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-                    <tr class="example-box" *ngFor="let contact of contacts; let i = index" cdkDrag>
+                    <tr class="example-box" *ngFor="let contact of contacts" cdkDrag>
                         <td>{{contact.fullName}}</td>
                         <td>{{contact.email}}</td>
                         <td>{{contact.phone}}</td>
                         <td class="center aligned">
                             <div class="ui buttons">
-                                <button [disabled]="editUser || newUser" (click)="editContact(i)"
+                                <button [disabled]="editUser || newUser" (click)="editContact(contact.id)"
                                     class="ui labeled icon button">
                                     <i class="edit icon"></i>
                                     Edit contact
@@ -40,7 +40,7 @@
                 <tfoot class="full-width">
                     <tr>
                         <th colspan="4">
-                            <button [disabled]="editUser || newUser" (click)="newUser = !newUser"
+                            <button [disabled]="editUser || newUser" (click)="createContact()"
                                 class="ui right floated small primary labeled icon button">
                                 <i class="user icon"></i> Add User
                             </button>

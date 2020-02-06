@@ -2,7 +2,7 @@ import { IContacts } from './../../interfaces/contacts';
 import { ContactService } from './../../services/contact.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-contacts',
@@ -19,54 +19,18 @@ export class ContactsComponent implements OnInit {
     public contactHeading: string;
     public edit: Array<number> = [];
 
-    /* public stuff = [
-        {
-            id: 0,
-            firstName: 'Peep',
-            lastName: 'Meep',
-            fullName: 'Peep Meep',
-            email: 'pmeep@email.com',
-            phone: '54545544',
-            sequence: 0
-        },
-        {
-            id: 1,
-            firstName: 'Peep1',
-            lastName: 'Meep1',
-            fullName: 'Peep Meep1',
-            email: 'pmeep1@email.com',
-            phone: '54545544',
-            sequence: 500
-        },
-        {
-            id: 2,
-            firstName: 'Peep2',
-            lastName: 'Meep2',
-            fullName: 'Peep Meep2',
-            email: 'pmeep2@email.com',
-            phone: '54545544',
-            sequence: 4000
-        },
-        {
-            id: 3,
-            firstName: 'Peep3',
-            lastName: 'Meep3',
-            fullName: 'Peep Meep3',
-            email: 'pmeep3@email.com',
-            phone: '54545544',
-            sequence: 800
-        }
-    ] */
-
     constructor(
         public contactService: ContactService,
         private readonly fb: FormBuilder,
     ) {
         this.form = this.fb.group({
-            firstName: [''],
-            lastName: [''],
-            phone: [''],
-            email: [''],
+            firstName: ['', Validators.required],
+            lastName: ['', Validators.required],
+            phone: ['', Validators.required],
+            email: ['', Validators.compose([
+                Validators.required,
+                Validators.email
+            ])],
             sequence: [0],
             id: [0],
         });
@@ -76,25 +40,24 @@ export class ContactsComponent implements OnInit {
         this.generateContactList();
     }
 
+    public createContact() {
+        this.newUser = true;
+        this.form.reset();
+
+    }
+
     public drop(event: CdkDragDrop<Array<string>>) {
         moveItemInArray(this.contacts, event.previousIndex, event.currentIndex);
-        console.log(event.previousIndex, event.currentIndex)
-        let sequence = 0;
-        if (event.currentIndex !== 0) {
-            sequence = this.contacts[event.currentIndex - 1].sequence + 1;
-        }
-        console.log(sequence)
-        const patchedContact: IContacts = {
-            firstName: this.contacts[event.currentIndex].firstName,
-            lastName: this.contacts[event.currentIndex].lastName,
-            email: this.contacts[event.currentIndex].email,
-            phone: this.contacts[event.currentIndex].phone,
-            sequence
-        };
 
-        this.contactService.editContact(this.contacts[event.currentIndex].id, patchedContact).subscribe((response) => {
-            console.log(response)
-        });
+        let index = 0;
+
+        for (const contact of this.contacts) {
+            index++;
+            contact.sequence = index - 1;
+            this.contactService.editContact(contact.id, contact).subscribe((response) => {
+            });
+        }
+        this.generateContactList();
     }
 
     public generateContactList(): void {
@@ -114,12 +77,13 @@ export class ContactsComponent implements OnInit {
         };
 
         this.contactService.addNewContact(newContact).subscribe((response) => {
+            this.form.updateValueAndValidity();
             this.generateContactList();
             this.newUser = false;
         });
     }
 
-    public submitEditContact(id: number): void {
+    public submitEditContact(): void {
         const patchedContact: IContacts = {
             firstName: this.form.get('firstName').value,
             lastName: this.form.get('lastName').value,
@@ -132,7 +96,7 @@ export class ContactsComponent implements OnInit {
         this.contactService.editContact(this.form.get('id').value, patchedContact).subscribe((response) => {
             this.generateContactList();
             this.editUser = false;
-            this.editContact(id);
+            this.editContact(this.form.get('id').value);
         });
     }
 
@@ -142,37 +106,34 @@ export class ContactsComponent implements OnInit {
         });
     }
 
-    public createContact(id: number): void {
-        const contact = this.contacts[id];
-        console.log(contact)
-        this.form.setValue({
-            firstName: contact.firstName,
-            lastName: contact.lastName,
-            email: contact.email,
-            phone: contact.phone,
-            sequence: contact.sequence,
-            id: contact.id
-        });
-        console.log(this.form.value)
+    public setFormContact(id: number): void {
+        for (const contact of this.contacts) {
+            if (contact.id === id) {
+                this.form.setValue({
+                    firstName: contact.firstName,
+                    lastName: contact.lastName,
+                    email: contact.email,
+                    phone: contact.phone,
+                    sequence: contact.sequence,
+                    id: contact.id
+                });
+            }
+        }
     }
 
     public editContact(inputIndex: number): void {
-        console.log(inputIndex)
         this.contactHeading = 'Edit contact';
         if (this.edit) {
             if (this.edit.indexOf(inputIndex) === -1) {
-                console.log('jah')
                 this.editUser = true;
                 this.edit.push(inputIndex);
-                this.createContact(inputIndex);
+                this.setFormContact(inputIndex);
             } else {
-                console.log('ei')
                 this.editUser = false;
                 this.edit.splice(this.edit.indexOf(inputIndex), 1);
             }
         } else {
             this.edit = [inputIndex];
         }
-        console.log(this.edit)
     }
 }

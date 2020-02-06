@@ -1,9 +1,15 @@
+.ui.form {
+  .ng-invalid {
+    background-color: #fff6f6 !important;
+    border-color: #e0b4b4 !important;
+  }
+}
 
 .example-box {
   cursor: move;
   background: white;
   &:hover {
-      background-color: rgba(199, 199, 199, 0.37);
+    background-color: rgba(199, 199, 199, 0.37);
   }
 }
 
@@ -31,5 +37,5 @@
 }
 
 .delete {
-    position: absolute;
+  position: absolute;
 }
